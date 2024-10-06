@@ -8,9 +8,13 @@ This project implements a simple RESTful API for a ticketing system that allows 
 
 # Endpoints
 
-(POST) /register : for user to registered their account \\
-(POST) /login : to get their token to get into the main website. \\
-(POST) /tickets : to order a ticket \\ 
-(GET) /tickets : if the role is user, it will show the user's ticket details. if the role is admin, all tickets in database is showed. \\
-(GET, PATCH, DELETE) /ticket/:id : only for admin. use for search user's ticket by their id, update the status to verification their payment, and delete ticket. \\
+(POST) /register : for user to registered their account
+
+(POST) /login : to get their token to get into the main website. 
+
+(POST) /tickets : to order a ticket 
+
+(GET) /tickets : if the role is user, it will show the user's ticket details. if the role is admin, all tickets in database is showed. 
+
+(GET, PATCH, DELETE) /ticket/:id : only for admin. use for search user's ticket by their id, update the status to verification their payment, and delete ticket. 
 
