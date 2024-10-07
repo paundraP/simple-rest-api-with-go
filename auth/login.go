@@ -2,6 +2,7 @@ package auth
 
 import (
 	"net/http"
+	"paundraP/rest-api-with-go/database"
 	"paundraP/rest-api-with-go/middleware"
 	"paundraP/rest-api-with-go/models"
 
@@ -17,7 +18,7 @@ func Login(c *gin.Context) {
 	}
 
 	var foundUser models.User
-	if err := models.DB.Where("email = ?", user.Email).First(&foundUser).Error; err != nil {
+	if err := database.DB.Where("email = ?", user.Email).First(&foundUser).Error; err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
 		return
 	}

@@ -9,6 +9,7 @@ import (
 
 func TicketRoutes(router *gin.Engine) {
 	r := router.Group("/")
+	r.GET("", controllers.HomePage)
 	r.Use(middleware.AuthMiddleware())
 	r.POST("/tickets", controllers.CreateTicket)
 	r.GET("/tickets", controllers.FindTicket)

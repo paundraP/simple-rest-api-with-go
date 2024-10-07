@@ -2,6 +2,7 @@ package auth
 
 import (
 	"net/http"
+	"paundraP/rest-api-with-go/database"
 	"paundraP/rest-api-with-go/models"
 	"time"
 
@@ -26,7 +27,7 @@ func Register(c *gin.Context) {
 	user.CreatedAt = time.Now()
 	user.UpdatedAt = time.Now()
 
-	if err := models.DB.Create(&user).Error; err != nil {
+	if err := database.DB.Create(&user).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
 		return
 	}

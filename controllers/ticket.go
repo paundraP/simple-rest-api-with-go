@@ -3,6 +3,7 @@ package controllers
 import (
 	"log"
 	"net/http"
+	"paundraP/rest-api-with-go/database"
 	"paundraP/rest-api-with-go/models"
 
 	"github.com/gin-gonic/gin"
@@ -21,9 +22,13 @@ type UpdateTicketInput struct {
 	Status bool   `json:"status"`
 }
 
+func HomePage(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"data": "welcome!"})
+}
+
 func FindTickets(c *gin.Context) {
 	var tickets []models.Ticket
-	models.DB.Find(&tickets)
+	database.DB.Find(&tickets)
 
 	c.JSON(http.StatusOK, gin.H{"data": tickets})
 }
@@ -44,7 +49,7 @@ func CreateTicket(c *gin.Context) {
 	}
 
 	var existingTicket models.Ticket
-	if err := models.DB.Where("id = ?", user.ID).First(&existingTicket).Error; err == nil {
+	if err := database.DB.Where("id = ?", user.ID).First(&existingTicket).Error; err == nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "You have already ordered a ticket"})
 		return
 	}
@@ -57,7 +62,7 @@ func CreateTicket(c *gin.Context) {
 		Status: false,
 	}
 
-	result := models.DB.Create(&ticket)
+	result := database.DB.Create(&ticket)
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 		return
@@ -74,7 +79,7 @@ func FindTicket(c *gin.Context) {
 
 	if user.Role == "admin" {
 		var tickets []models.Ticket
-		if err := models.DB.Find(&tickets).Error; err != nil {
+		if err := database.DB.Find(&tickets).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrieve tickets"})
 			return
 		}
@@ -82,7 +87,7 @@ func FindTicket(c *gin.Context) {
 	}
 	if user.Role == "user" {
 		var tickets []models.Ticket
-		if err := models.DB.Where("id = ?", user.ID).Find(&tickets).Error; err != nil {
+		if err := database.DB.Where("id = ?", user.ID).Find(&tickets).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrieve tickets"})
 			return
 		}
@@ -92,7 +97,7 @@ func FindTicket(c *gin.Context) {
 
 func UpdateTicket(c *gin.Context) {
 	var ticket models.Ticket
-	if err := models.DB.Where("id = ?", c.Param("id")).First(&ticket).Error; err != nil {
+	if err := database.DB.Where("id = ?", c.Param("id")).First(&ticket).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"data": "Ticket tidak ditemukan!"})
 		return
 	}
@@ -103,19 +108,19 @@ func UpdateTicket(c *gin.Context) {
 		return
 	}
 
-	models.DB.Model(&ticket).Updates(input)
+	database.DB.Model(&ticket).Updates(input)
 	c.JSON(http.StatusOK, gin.H{"data": ticket})
 }
 
 func DeleteTicket(c *gin.Context) {
 	var ticket models.Ticket
 
-	if err := models.DB.Where("id = ?", c.Param("id")).First(&ticket).Error; err != nil {
+	if err := database.DB.Where("id = ?", c.Param("id")).First(&ticket).Error; err != nil {
 		log.Println("Error finding record:", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 		return
 	}
 
-	models.DB.Delete(&ticket)
+	database.DB.Delete(&ticket)
 	c.JSON(http.StatusOK, gin.H{"data": "terhapus"})
 }

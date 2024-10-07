@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net/http"
+	"paundraP/rest-api-with-go/database"
 	"paundraP/rest-api-with-go/models"
 	"strings"
 
@@ -32,7 +33,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		var user models.User
-		if err := models.DB.First(&user, claims.Subject).Error; err != nil {
+		if err := database.DB.First(&user, claims.Subject).Error; err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
 			c.Abort()
 			return
