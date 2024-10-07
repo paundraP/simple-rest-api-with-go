@@ -1,8 +1,9 @@
-package models
+package database
 
 import (
 	"log"
 	"os"
+	"paundraP/rest-api-with-go/models"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -27,11 +28,11 @@ func ConnectDB() {
 	if err != nil {
 		log.Fatal("Failed to connect to database")
 	}
-	err = db.AutoMigrate(&Ticket{})
+	err = db.AutoMigrate(&models.Ticket{})
 	if err != nil {
 		log.Fatal("Failed to auto-migrate Ticket model")
 	}
-	err = db.AutoMigrate(&User{})
+	err = db.AutoMigrate(&models.User{})
 	if err != nil {
 		log.Fatal("Failed to auto-migrate Ticket model")
 	}
