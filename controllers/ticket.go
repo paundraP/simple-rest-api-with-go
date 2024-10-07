@@ -33,7 +33,7 @@ func FindTickets(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": tickets})
 }
 
-func CreateTicket(c *gin.Context) {
+func OrderTicket(c *gin.Context) {
 	var input CreateTicketInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

@@ -11,7 +11,7 @@ func TicketRoutes(router *gin.Engine) {
 	r := router.Group("/")
 	r.GET("", controllers.HomePage)
 	r.Use(middleware.AuthMiddleware())
-	r.POST("/tickets", controllers.CreateTicket)
+	r.POST("/tickets", controllers.OrderTicket)
 	r.GET("/tickets", controllers.FindTicket)
 	r.GET("/ticket/:id", middleware.AdminOnly(), controllers.FindTicket)
 	r.PATCH("/ticket/:id", middleware.AdminOnly(), controllers.UpdateTicket)
