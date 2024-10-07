@@ -27,10 +27,27 @@ func HomePage(c *gin.Context) {
 }
 
 func FindTickets(c *gin.Context) {
-	var tickets []models.Ticket
-	database.DB.Find(&tickets)
+	var user models.User
+	if val, exists := c.Get("user"); exists {
+		user = val.(models.User)
+	}
 
-	c.JSON(http.StatusOK, gin.H{"data": tickets})
+	if user.Role == "admin" {
+		var tickets []models.Ticket
+		if err := database.DB.Find(&tickets).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrieve tickets"})
+			return
+		}
+		c.JSON(http.StatusOK, tickets)
+	}
+	if user.Role == "user" {
+		var tickets []models.Ticket
+		if err := database.DB.Where("id = ?", user.ID).Find(&tickets).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrieve tickets"})
+			return
+		}
+		c.JSON(http.StatusOK, tickets)
+	}
 }
 
 func OrderTicket(c *gin.Context) {
@@ -53,7 +70,9 @@ func OrderTicket(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "You have already ordered a ticket"})
 		return
 	}
-
+	if input.Amount > 5 {
+		input.Amount = 5
+	}
 	ticket := models.Ticket{
 		Name:   input.Name,
 		NIK:    input.NIK,
@@ -72,27 +91,14 @@ func OrderTicket(c *gin.Context) {
 }
 
 func FindTicket(c *gin.Context) {
-	var user models.User
-	if val, exists := c.Get("user"); exists {
-		user = val.(models.User)
+	var ticket models.Ticket
+
+	if err := database.DB.Where("id = ?", c.Param("id")).First(&ticket).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"data": "Ticket tidak ditemukan!"})
+		return
 	}
 
-	if user.Role == "admin" {
-		var tickets []models.Ticket
-		if err := database.DB.Find(&tickets).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrieve tickets"})
-			return
-		}
-		c.JSON(http.StatusOK, tickets)
-	}
-	if user.Role == "user" {
-		var tickets []models.Ticket
-		if err := database.DB.Where("id = ?", user.ID).Find(&tickets).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrieve tickets"})
-			return
-		}
-		c.JSON(http.StatusOK, tickets)
-	}
+	c.JSON(http.StatusOK, gin.H{"data": ticket})
 }
 
 func UpdateTicket(c *gin.Context) {
